@@ -6,9 +6,9 @@ public class ShrinkingPlatform : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    float scaleRate = 0.1f;
+    float scaleRate = 0.05f;
     bool playerColliding = false;
-    float resizeTimer = 0.25f;
+
     void Start()
     {
         
@@ -29,14 +29,12 @@ public class ShrinkingPlatform : MonoBehaviour
         while (this.gameObject.transform.localScale.x > 0 && this.gameObject.transform.localScale.y > 0)
         {
            
-            this.gameObject.transform.localScale -= new Vector3(scaleRate, scaleRate, 0); // works
+            //this.gameObject.transform.localScale -= new Vector3(scaleRate, scaleRate, 0); // works
 
-
-            //float newScaleRate = 0.1f;
-            //Vector3 resizedPlatform = new Vector3(this.gameObject.transform.localScale.x - newScaleRate, this.gameObject.transform.localScale.y - newScaleRate, 0);
-            //Debug.Log(resizedPlatform);
-            //this.gameObject.transform.localScale = Vector3.Lerp(transform.localScale, resizedPlatform, Time.deltaTime);
-            yield return new WaitForSeconds(0.1f);
+            Vector3 resizedPlatform = new Vector3(this.gameObject.transform.localScale.x - scaleRate, this.gameObject.transform.localScale.y - scaleRate, 0);
+            Debug.Log(resizedPlatform);
+            this.gameObject.transform.localScale = Vector3.Lerp(transform.localScale, resizedPlatform, 0.5f);
+            yield return new WaitForSeconds(0.05f);
 
             
         }
