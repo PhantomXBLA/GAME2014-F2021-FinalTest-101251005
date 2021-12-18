@@ -9,12 +9,17 @@ public class ShrinkingPlatform : MonoBehaviour
     float scaleRate = 0.05f;
     bool playerColliding = false;
     Vector2 platformStartSize;
+    Vector2 platformStartPos;
+
+    public AudioSource[] sounds;
 
     bool platformShrunk;
 
     void Start()
     {
         platformStartSize = this.gameObject.transform.localScale;
+        platformStartPos = this.gameObject.transform.position;
+        
     }
 
     // Update is called once per frame
@@ -25,6 +30,7 @@ public class ShrinkingPlatform : MonoBehaviour
             this.gameObject.transform.localScale = new Vector3(0, platformStartSize.y, 0);
             Debug.Log(platformStartSize);
             playerColliding = false;
+
             if (playerColliding == false)
             {
                 StartCoroutine(GrowTimer());
@@ -32,7 +38,7 @@ public class ShrinkingPlatform : MonoBehaviour
         }
 
         Debug.Log(playerColliding);
-
+        HoverUpDown();
     }
 
     IEnumerator Shrink()
@@ -52,6 +58,11 @@ public class ShrinkingPlatform : MonoBehaviour
 
 
 
+    }
+
+    void HoverUpDown()
+    {
+        transform.position = new Vector3(transform.position.x, platformStartPos.y + Mathf.PingPong(Time.time / 3, 0.25f), 0.0f);
     }
 
     IEnumerator Regrow()
@@ -77,6 +88,7 @@ public class ShrinkingPlatform : MonoBehaviour
         if (playerColliding)
         {
             StartCoroutine(Shrink());
+            sounds[0].Play();
         }
     }
 
@@ -87,6 +99,7 @@ public class ShrinkingPlatform : MonoBehaviour
         if (playerColliding == false)
         {
             StartCoroutine(Regrow());
+            sounds[1].Play();
         }
     }
 
