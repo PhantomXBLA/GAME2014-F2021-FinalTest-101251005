@@ -8,30 +8,41 @@ public class ShrinkingPlatform : MonoBehaviour
 
     float scaleRate = 0.05f;
     bool playerColliding = false;
+    Vector2 platformStartSize;
+
+    bool platformShrunk;
 
     void Start()
     {
-        
+        platformStartSize = this.gameObject.transform.localScale;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (this.gameObject.transform.localScale.x <= 0 || this.gameObject.transform.localScale.y <= 0)
+        if (this.gameObject.transform.localScale.x < 0)
         {
-            Destroy(this.gameObject);
+            this.gameObject.transform.localScale = new Vector3(0, platformStartSize.y, 0);
+            Debug.Log(platformStartSize);
+            playerColliding = false;
+            if (playerColliding == false)
+            {
+                StartCoroutine(GrowTimer());
+            }
         }
+
+        Debug.Log(playerColliding);
 
     }
 
     IEnumerator Shrink()
     {
-        while (this.gameObject.transform.localScale.x > 0 && this.gameObject.transform.localScale.y > 0)
+        while (this.gameObject.transform.localScale.x > 0 && playerColliding)
         {
            
             //this.gameObject.transform.localScale -= new Vector3(scaleRate, scaleRate, 0); // works
 
-            Vector3 resizedPlatform = new Vector3(this.gameObject.transform.localScale.x - scaleRate, this.gameObject.transform.localScale.y - scaleRate, 0);
+            Vector3 resizedPlatform = new Vector3(this.gameObject.transform.localScale.x - scaleRate, this.gameObject.transform.localScale.y, 0);
             Debug.Log(resizedPlatform);
             this.gameObject.transform.localScale = Vector3.Lerp(transform.localScale, resizedPlatform, 0.5f);
             yield return new WaitForSeconds(0.05f);
@@ -43,13 +54,39 @@ public class ShrinkingPlatform : MonoBehaviour
 
     }
 
+    IEnumerator Regrow()
+    {
+        while (this.gameObject.transform.localScale.x < platformStartSize.x)
+        {
+
+            //this.gameObject.transform.localScale -= new Vector3(scaleRate, scaleRate, 0); // works
+
+            Vector3 resizedPlatform = new Vector3(this.gameObject.transform.localScale.x + scaleRate, this.gameObject.transform.localScale.y, 0);
+            //Debug.Log(resizedPlatform);
+            this.gameObject.transform.localScale = Vector3.Lerp(transform.localScale, resizedPlatform, 0.5f);
+            yield return new WaitForSeconds(0.1f);
+
+
+        }
+    }
+
     IEnumerator ShrinkTimer()
     {
-         yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f);
 
         if (playerColliding)
         {
             StartCoroutine(Shrink());
+        }
+    }
+
+    IEnumerator GrowTimer()
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        if (playerColliding == false)
+        {
+            StartCoroutine(Regrow());
         }
     }
 
@@ -59,6 +96,7 @@ public class ShrinkingPlatform : MonoBehaviour
         {
             Debug.Log("player touched");
             playerColliding = true;
+            StopAllCoroutines();
             StartCoroutine(ShrinkTimer());
         }
     }
@@ -69,6 +107,8 @@ public class ShrinkingPlatform : MonoBehaviour
         {
             Debug.Log("player ceased touch");
             playerColliding = false;
+            StopAllCoroutines();
+            StartCoroutine(GrowTimer());
         }
     }
 }
