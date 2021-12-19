@@ -2,6 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+Full Name:        Tyler Miles
+Student ID:       101251005
+File:             ShrinkingPlatform.cs
+Description:      This controls the shrinking platform prefab.
+Date last modified: Dec 18, 2021
+*/
+
 public class ShrinkingPlatform : MonoBehaviour
 {
     // Start is called before the first frame update
